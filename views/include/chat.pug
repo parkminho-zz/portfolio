@@ -1,0 +1,30 @@
+body
+  ul#messages
+  form#form(action='')
+    if loginconfirm
+      input#inputid(type = 'hidden', value=`${loginuser.userid}`)
+    input#input(autocomplete='off')
+    button(type='submit') enter
+
+    
+  script(src='/socket.io/socket.io.js')
+  script.
+    var socket = io();
+  
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(input.value){
+        if(#{!loginconfirm}){
+          alert('로그인 후 사용해주세요');
+        } else{
+          socket.emit('msg', `${inputid.value}: ` + input.value);
+          input.value='';
+        }}
+    })
+    socket.on('message',function(data){
+      var item = document.createElement('li');
+      item.textContent = data;
+      messages.appendChild(item); 
+      messages.scrollTop = messages.scrollHeight;
+    });

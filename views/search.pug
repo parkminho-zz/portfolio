@@ -1,0 +1,5 @@
+extends layout
+block content
+    each row in board 
+        a(href=`/board/${row.board_num}`) #{row.board_num} / #{row.title} / #{row.writer} / #{row.wr_date} / #{row.view_cnt}
+        dd

@@ -1,0 +1,96 @@
+extends layout
+
+
+block content
+    title 회원가입
+    form(method="post" action="/email/2")    
+        p 
+        |아이디  
+        input(placeholder='id', name='userid', id='userid')
+        p
+        |비밀번호  
+        input(type='password', placeholder='password', name='password', id='password')
+        p
+        |비밀번호 재입력 
+        input(type='password', placeholder='password 재확인',name='password2', id='password2')
+        p 
+        |이메일  
+        input(type='text', placeholder='example@gmail.com', name='email', id='email') 
+        p   
+        |
+        button(type='submit', name='emailgogo', id='emailgogo') 인증하기
+        
+    button(id='idauth',onclick='idauth()', name='idauth') id 중복확인
+    p
+    button(type='button', onclick="emailauth()", name='emailauth', id='emailauth') email 중복확인
+
+    script(src='/socket.io/socket.io.js')
+    script(type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js")
+    script.
+        var socket = io();
+        socket.on('idauthO', function(data){
+            alert(data);
+        })
+        socket.on('idauthX', function(data){
+            alert(data);
+            userid.value='';
+            userid.focus();
+        })              
+
+        socket.on('emailauthO', function(data){
+            alert(data);
+        })
+        socket.on('emailauthX', function(data){
+            alert(data);
+            email.value='';
+            email.focus();
+        })              
+
+
+        function emailauth(){
+            if(!email.value){
+                alert("이메일을 입력하세요!");
+                email.focus();
+                return;
+            }else if(!CheckEmail(email.value)){
+                alert("이메일 형식이 잘못되었습니다.")
+                email.focus();
+                return;
+            }else{
+                socket.emit('emailauth', `${email.value}`);
+            }       
+        }        
+        
+    
+        function idauth(){
+            if(!userid.value){
+                alert("ID를 입력해주세요")
+                userid.focus();
+                return;
+            }else if(CheckId(userid.value)){
+              alert("영문 및 숫자만 입력해주세요.")
+              userid.focus();
+              userid.value='';
+              return;
+            }else{
+                socket.emit('idauth', `${userid.value}`);
+            }}  
+
+
+
+
+        function CheckEmail(str){                                                 
+            var reg_email = /^([0-9a-zA-Z_\.-]+)@([0-9a-zA-Z_-]+)(\.[0-9a-zA-Z_-]+){1,2}$/;
+            if(!reg_email.test(str)) {                            
+                return false;
+            }else {                       
+                return true;
+            }} 
+        function CheckId(str){
+            var reg_id = /[^0-9a-zA-Z]/g;
+            if(!reg_id.test(str)) {
+                return false;
+            }else {
+                return true;
+            }
+        }

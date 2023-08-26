@@ -1,0 +1,40 @@
+extends layout
+block content
+    ul#boardlist
+    th 번호 / 제목 / 작성자 / 작성일 / 조회수 
+    p
+    each row in board 
+        a(href=`/board/${row.board_num}`) #{row.board_num} / #{row.title} / #{row.writer} / #{row.wr_date} / #{row.view_cnt}
+        dd    
+    p      
+    - for(var i= 1; i<= rowcount; i++)
+        -if ( i!== 1)
+         | &nbsp;&nbsp; 
+        a(href=`/board/list?page=${i}`) #{i}  
+
+    if loginconfirm
+        p 
+        button(type='button', onclick='boardgo()', name='boardwrite', id='boardwrite' ) 글쓰기        
+    p
+    form(method="get" action=`/board/list/search`)    
+        select(name ="type")
+            option(value='num') 글번호
+            option(value='title_content') 제목+내용
+            option(value='writer') 작성자
+        input(id= 'value', name='value', placeholder='search')
+        button(type='submit') 검색    
+
+    include include/loginactive.pug
+    p
+    if !loginconfirm
+        a(href='/') 로그인<br>
+        a(href='/register') 회원가입 <br>
+    include include/chat.pug
+
+    p
+    script.
+        function boardgo(){
+            location.href= '/board/write';      
+        }
+
+

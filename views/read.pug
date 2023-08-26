@@ -1,0 +1,42 @@
+extends layout
+block content
+    
+    each row in board 
+        dd 게시글 번호: #{row.board_num}
+        dd 제목: #{row.title}
+        dd 내용: #{row.content}
+        dd 작성자: #{row.writer}
+        dd 작성날짜: #{row.wr_date}
+        dd 조회수: #{row.view_cnt}
+
+    if writer    
+        button(type='button', onclick='modify()', name='modify', id='modify' ) 수정하기    
+        p
+        p
+        button(type='button', onclick='remove()', name='remove', id='remove' ) 삭제하기
+        
+    p
+    p
+    a(href='/board/list') 목록  
+
+    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+    script.
+        function modify(){
+            location.href= `/board/#{boardnum}/modify`;      
+        };
+        
+        function remove(){
+            axios.post(`/board/#{boardnum}/remove`)
+                .then(data => {
+                    if(!confirm("확인(예) 또는 취소(아니오)를 선택해주세요.")){
+                        return;
+                    } else{
+                        alert(data.data);
+                        window.location.replace("/board/list");    
+                    }                
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                })
+        };
+

@@ -1,0 +1,11 @@
+extends layout
+block content
+    form(method="post" action=`/board/${boardnum}/modify/process`)    
+        p 
+        |  
+        input(value=`${title}` ,name='title', id='title', style= 'width:350px')
+        p
+        |  
+        textarea(name='content', id='content', rows='10' cols='50') #{content}
+        p
+        button(type='submit') 수정하기

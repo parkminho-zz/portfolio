@@ -1,0 +1,54 @@
+extends layout
+
+
+block content
+    title 인증
+    input(value= `${userauth}` , id= 'authuser' , name= 'authuser' )
+    input(value= `${passwordauth}`, id= 'authpassword', name = 'authpassword')     
+    input(value= `${passwordauth}`, id= 'authpassword2', name = 'authpassword2')         
+    input(value= `${emailauth}`, id= 'authemail', name= 'authemail') 
+    p 
+    |인증코드 
+    input(placeholder='인증코드', name='codeauth', id='codeauth')
+    button(type='button', onclick="registergo()", name='register', id='register') 인증하기
+
+    script(src='/socket.io/socket.io.js')    
+    script(type="text/javascript" src="http://code.jquery.com/jquery-3.5.1.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js")
+    script.
+        var socket = io();
+        var dataToSend= {
+            userid : authuser.value,
+            password : authpassword.value,
+            password2 : authpassword2.value,
+            email : authemail.value
+        }
+        socket.on('registerauthO', function(data){
+            axios.post('/register/process', dataToSend)
+                .then(data => {
+                    alert(data.data);
+                    if(authuser.value && authpassword.value == authpassword2.value && authemail)
+                        window.location.replace("/");
+                })
+                .catch(error => {            
+                    console.error('Error:', error);
+                });            
+        })        
+
+        socket.on('registerauthX', function(data){
+            console.log(data);
+            codeauth.focus();
+            codeauth.value= '';
+        })        
+        function registergo(){
+            if(!codeauth.value){
+                alert('인증코드를 입력해주세요');
+            }else{
+                socket.emit('registerauth', `${codeauth.value}`)   
+            }
+        }        
+
+            
+            
+            
+
